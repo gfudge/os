@@ -1,8 +1,9 @@
-CC=gcc
+CC=clang
 CFLAGS =-m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector \
-        -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
+        -nodefaultlibs -Wall -Wextra -Werror -c
+LD=ld
 LDFLAGS =-n -T $(ARCHDIR)/link.ld -melf_i386
-AS = nasm
+AS=nasm
 ASFLAGS =-f elf
 
 INCLUDEDIR=include
@@ -21,7 +22,7 @@ OBJECTS=$(KERNEL_OBJS)
 all: kernel.elf
 
 kernel.elf: $(OBJECTS)
-	ld $(LDFLAGS) $(OBJECTS) -o kernel.elf
+	$(LD) $(LDFLAGS) $(OBJECTS) -o kernel.elf
 
 os.iso: kernel.elf
 	cp kernel.elf iso/boot/kernel.elf
