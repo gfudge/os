@@ -1,20 +1,33 @@
+; Load the IDT
+global load_idt
+; stack:
+;   [esp + 4] <- address of first IDT entry
+;   [esp    ] <- return address
+load_idt:
+  mov   eax, [esp+4]
+  lidt  [eax]
+  ret
+
 ; No Error Code Interrupt Handler Macro
-%macro no_error_code_interrupt_handler %1
+%macro no_error_code_interrupt_handler 1
 global interrupt_handler_%1
 interrupt_handler_%1:
   push  dword 0   ; push 0 as error_code
   push  dword %1  ; push interrupt number
-  jmp   generic_interrupt_handler
+  ; construct generic handler
+  generic_interrupt_handler %1
 %endmacro
 
 ; Error Code Interrupt Handler Macro
-%macro error_code_interrupt_handler %1
+%macro error_code_interrupt_handler 1
 global interrupt_handler_%1
+interrupt_handler_%1:
   push  dword %1
-  jmp   generic_interrupt_handler
+  ; construct generic handler
+  generic_interrupt_handler %1
 %endmacro
 
-generic_interrupt_handler:
+%macro generic_interrupt_handler 1
   ; save registers
   push  eax
   push  ebx
@@ -26,7 +39,7 @@ generic_interrupt_handler:
   push  edi
 
   ; call the handler
-  call  interrupt_handler
+  call  interrupt_handler_%1
   
   ;restore the registers
   pop   edi
@@ -43,6 +56,7 @@ generic_interrupt_handler:
 
   ; return to interrupted code
   iret
+%endmacro
 
 ; Interrupt Handlers
 no_error_code_interrupt_handler 0
