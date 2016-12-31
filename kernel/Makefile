@@ -1,10 +1,22 @@
-OBJECTS = loader.o kmain.o tty.o logging.o
 CC=gcc
 CFLAGS =-m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector \
         -nostartfiles -nodefaultlibs -Wall -Wextra -Werror -c
-LDFLAGS =-n -T link.ld -melf_i386
+LDFLAGS =-n -T $(ARCHDIR)/link.ld -melf_i386
 AS = nasm
 ASFLAGS =-f elf
+
+INCLUDEDIR=include
+ARCHDIR=arch/i386
+SRCDIR=src
+
+include $(ARCHDIR)/make.config
+include $(SRCDIR)/make.config
+
+KERNEL_OBJS=\
+$(KERNEL_ARCH_OBJS) \
+$(KERNEL_SRC_OBJS)  \
+
+OBJECTS=$(KERNEL_OBJS)
 
 all: kernel.elf
 
@@ -28,10 +40,11 @@ run: os.iso
 	bochs -f bochsrc.txt -q
 
 %.o: %.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) -I$(INCLUDEDIR) $(CFLAGS) $< -o $@
 
 %.o: %.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 clean:
-	rm -rf *.o kernel.elf os.iso
+	rm -f kernel.elf os.iso
+	rm -f $(OBJECTS) *.o */*.o */*/*.o

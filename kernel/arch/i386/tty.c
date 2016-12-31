@@ -1,5 +1,5 @@
-#include "tty.h"
-#include "ktypes.h"
+#include <kernel/tty.h>
+#include <kernel/ktypes.h>
 
 static const k_uint32_t VGA_WIDTH   = 80;
 static const k_uint32_t VGA_HEIGHT  = 25;

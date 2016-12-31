@@ -35,3 +35,6 @@
 # Bochs
 bockslog.txt
 com1.out
+
+# ISO Image
+*.iso

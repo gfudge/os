@@ -1,5 +1,5 @@
-#include "logging.h"
-#include "tty.h"
+#include <kernel/logging.h>
+#include <kernel/tty.h>
 
 void log_init(void)
 {
@@ -12,13 +12,13 @@ void logk(const char *data, loglevel level)
   {
     case DEBUG:
       tty_writestr_color("[DEBUG]:", VGA_COLOR_WHITE);
-      tty_writestr_color(data, VGA_COLOR_GREEN);
+      tty_writestr_color(data, VGA_COLOR_BLUE);
       tty_newline();
       break;
 
     case INFO:
       tty_writestr_color("[INFO]:", VGA_COLOR_WHITE);
-      tty_writestr_color(data, VGA_COLOR_BLUE);
+      tty_writestr_color(data, VGA_COLOR_GREEN);
       tty_newline();
       break;
 
