@@ -1,4 +1,4 @@
-#include <kernel/tty.h>
+#include <arch/i386/tty.h>
 #include <kernel/ktypes.h>
 
 static const k_uint32_t VGA_WIDTH   = 80;

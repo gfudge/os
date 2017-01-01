@@ -5,15 +5,15 @@
 
 typedef enum loglevel_e
 {
-  DEBUG,
-  INFO,
-  WARNING,
-  ERROR,
-  CRITICAL,
-  PANIC
+  PANIC   = 1,
+  CRITICAL= 2,
+  ERROR   = 3,
+  WARNING = 4,
+  INFO    = 5,
+  DEBUG   = 6
 } loglevel;
 
-void log_init(void);
+void log_init(loglevel level);
 void logk(const k_char_t *data, loglevel level);
 
 #endif /* _LOGGING_H */

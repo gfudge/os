@@ -2,6 +2,10 @@
 global loader
 loader equ (_loader - 0xC0000000)
 
+; IDT Initialisation
+extern init_idt
+
+; Kernel Main Entry Point
 extern _kmain
 
 MAGIC_NUMBER  equ 0x1BADB002

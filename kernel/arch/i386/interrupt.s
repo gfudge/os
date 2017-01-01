@@ -9,25 +9,28 @@ load_idt:
   ret
 
 ; No Error Code Interrupt Handler Macro
-%macro no_error_code_interrupt_handler 1
+%macro no_error_code_interrupt_handler 2
 global interrupt_handler_%1
 interrupt_handler_%1:
   push  dword 0   ; push 0 as error_code
   push  dword %1  ; push interrupt number
   ; construct generic handler
-  generic_interrupt_handler %1
+  generic_interrupt_handler %2
 %endmacro
 
 ; Error Code Interrupt Handler Macro
-%macro error_code_interrupt_handler 1
+%macro error_code_interrupt_handler 2
 global interrupt_handler_%1
 interrupt_handler_%1:
   push  dword %1
   ; construct generic handler
-  generic_interrupt_handler %1
+  generic_interrupt_handler %2
 %endmacro
 
 %macro generic_interrupt_handler 1
+  ; globally define the externally 
+  ; linked interrupt handler
+  ;extern %1
   ; save registers
   push  eax
   push  ebx
@@ -39,7 +42,7 @@ interrupt_handler_%1:
   push  edi
 
   ; call the handler
-  call  interrupt_handler_%1
+  call  %1
   
   ;restore the registers
   pop   edi
@@ -58,7 +61,12 @@ interrupt_handler_%1:
   iret
 %endmacro
 
+; dummy handler
+dummy_handler:
+  nop
+  ret
+
 ; Interrupt Handlers
-no_error_code_interrupt_handler 0
-no_error_code_interrupt_handler 1
-error_code_interrupt_handler    2
+no_error_code_interrupt_handler 0,  dummy_handler
+no_error_code_interrupt_handler 1,  dummy_handler
+error_code_interrupt_handler    2,  dummy_handler

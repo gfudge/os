@@ -1,13 +1,24 @@
 #include <kernel/logging.h>
-#include <kernel/tty.h>
+#include <arch/i386/tty.h>
 
-void log_init(void)
+static loglevel current;
+
+void log_init(loglevel level)
 {
+  current = level; 
   tty_init();
 }
 
 void logk(const char *data, loglevel level)
-{
+{ 
+  // Ignore the message if below the
+  // current loglevel
+  if(current < level)
+  {
+    return;
+  }
+  
+  // Print out at valid log level
   switch(level)
   {
     case DEBUG:
