@@ -5,7 +5,7 @@ typedef struct idt_entry_s
 {
   unsigned short  base_lo;
   unsigned short  sel;
-  unsigned char   always0;
+  unsigned char   zero;
   unsigned char   flags;
   unsigned short  base_hi; 
 } __attribute__((packed)) idt_entry_t;
@@ -13,7 +13,7 @@ typedef struct idt_entry_s
 typedef struct idt_ptr_s
 {
   unsigned short  limit;
-  idt_entry_t     base;
+  unsigned int    base;
 } __attribute__((packed)) idt_ptr_t;
 
 void init_idt(void);

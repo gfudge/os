@@ -1,4 +1,6 @@
 #include <arch/i386/idt.h>
+#include <arch/i386/traps.h>
+
 #include <libk/string.h>
 #include <kernel/logging.h>
 
@@ -7,11 +9,9 @@ idt_entry_t idt[256];
 // Pointer to IDT table
 idt_ptr_t   idtp;
 
-// Dummy IDT
-void dummy_handler(void)
-{
-  return;
-}
+extern void interrupt_handler_0();
+extern void interrupt_handler_1();
+extern void interrupt_handler_2();
 
 // Initialise IDT
 void init_idt(void)
@@ -20,16 +20,16 @@ void init_idt(void)
 
   // Setup the IDT ptr
   idtp.limit  = (sizeof(idt_entry_t) * 256) - 1;
-  idtp.base   = idt[0];
+  idtp.base   = (unsigned int)&idt;
 
   // Zero out the IDT
   memset(&idt, 0, sizeof(idt_entry_t) * 256);
   
   // Setup new ISRs
   logk("Setting up ISRs", DEBUG);
-  set_idt_gate(0, *(unsigned long *)&dummy_handler, 0, 0);
-  set_idt_gate(1, *(unsigned long *)&dummy_handler, 0, 0);
-  set_idt_gate(2, *(unsigned long *)&dummy_handler, 0, 0);
+  set_idt_gate(TRAP_DZ, (unsigned)interrupt_handler_0, 0x8, 0x8E);
+  set_idt_gate(TRAP_ST, (unsigned)interrupt_handler_1, 0x8, 0x8E);
+  set_idt_gate(TRAP_NM, (unsigned)interrupt_handler_2, 0x8, 0x8E);
 
   // Load the IDT to processor's IDTR
   logk("Loading Interrupt Descriptor Table into Processor", DEBUG);
@@ -41,14 +41,11 @@ void init_idt(void)
 // Setup an ISR
 void set_idt_gate(unsigned char num, unsigned long base, unsigned short sel, unsigned char flags)
 {
-  // Cast an idt_entry object to point to relevant IDT entry
-  idt_entry_t new_entry = (const idt_entry_t)idt[num];
-  
   // Set the base address
-  new_entry.base_lo = (unsigned short)(base & 0x0000ffff);
-  new_entry.base_hi = (unsigned short)(base >> 16);
+  idt[num].base_lo = (base & 0x0000ffff);
+  idt[num].base_hi = (base >> 16);
 
   // Set the other fields
-  new_entry.sel = sel;
-  new_entry.flags = flags;
+  idt[num].sel = sel;
+  idt[num].flags = flags;
 }

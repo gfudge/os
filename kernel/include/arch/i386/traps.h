@@ -4,7 +4,7 @@
 #define TRAP_MAX  0x13  // Interrupt 19 to 31 reserved
 
 #define TRAP_DZ   0x0   // Div Zero
-#define TRAP_SS   0x1   // Single step
+#define TRAP_ST   0x1   // Single step
 #define TRAP_NM   0x2   // Nom-Maskable
 #define TRAP_BP   0x3   // Breakpoint
 #define TRAP_OF   0x4   // Overflow
@@ -23,7 +23,18 @@
 #define TRAP_AL   0x11  // Alignment Check
 #define TRAP_MA   0x12  // Machine Check
 
+typedef struct registers_s
+{
+  unsigned int gs, fs, es, ds;  /* Pushed Segment Registers */
+  unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax;  /* pushed by pusha */
+  unsigned int interrupt, error_code; /* pushed by pre-ISR handlers */
+  unsigned int eip, cs, eflags, user_esp, ss;  /* pushed by processor automatically */
+} registers_t;
+
 // Initialise traps
 void trap_init(void);
+
+// Fault handler
+void fault_handler(registers_t *registers);
 
 #endif /* _i386_TRAPS_H */
