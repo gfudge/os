@@ -9,15 +9,17 @@ ASFLAGS =-f elf
 INCLUDEDIR=include
 ARCHDIR=arch/i386
 SRCDIR=src
+LIBKDIR=libk
 
 include $(ARCHDIR)/make.config
 include $(SRCDIR)/make.config
+include $(LIBKDIR)/make.config
 
 KERNEL_OBJS=\
 $(KERNEL_ARCH_OBJS) \
 $(KERNEL_SRC_OBJS)  \
 
-OBJECTS=$(KERNEL_OBJS)
+OBJECTS=$(KERNEL_OBJS) $(LIBK_OBJS)
 
 all: kernel.elf
 
